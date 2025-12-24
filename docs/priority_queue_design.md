@@ -89,13 +89,17 @@ A flexible priority system for msg_sys covering:
 from enum import IntEnum, Enum
 
 class Priority(IntEnum):
-    CRITICAL = 10
-    URGENT = 8
-    HIGH = 7
-    NORMAL = 5
-    LOW = 3
-    BACKGROUND = 1
-    LOWEST = 0
+    CRITICAL = 10      # 🚨 Production down
+    URGENT = 9         # 🔥 Client waiting
+    PRIORITIZE = 8     # ⬆️ Upgraded task
+    HIGH = 7           # Important
+    ABOVE_NORMAL = 6   # Slightly elevated
+    NORMAL = 5         # ✅ Default
+    BELOW_NORMAL = 4   # Can wait
+    LOW = 3            # Background work
+    BACKGROUND = 2     # Run when idle
+    MAINTENANCE = 1    # Cleanup
+    LOWEST = 0         # Only if nothing else
 
 class Category(str, Enum):
     ETL = "etl"
@@ -447,7 +451,7 @@ INSERT INTO role_permissions VALUES
 
 ### Permission Matrix
 
-| Role | View | Prioritize (→7) | Urgent (→9) | Critical (→10) | Cancel | Manage Users |
+| Role | View | Prioritize (→8) | Urgent (→9) | Critical (→10) | Cancel | Manage Users |
 |------|------|-----------------|-------------|----------------|--------|--------------|
 | Viewer | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
 | Operator | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
@@ -507,7 +511,7 @@ def get_action_buttons(user_role: str, task_id: str):
 
 | Button | Permission Required | Action | Priority |
 |--------|---------------------|--------|----------|
-| ⬆️ Prioritize | `prioritize_tasks` | `upgrade_task(id, PRIORITIZE, reason, user)` | →7 |
+| ⬆️ Prioritize | `prioritize_tasks` | `upgrade_task(id, PRIORITIZE, reason, user)` | →8 |
 | 🔥 Urgent | `urgent_tasks` | `upgrade_task(id, URGENT, reason, user)` | →9 |
 | 🚨 Critical | `critical_tasks` | `upgrade_task(id, CRITICAL, reason, user)` | →10 |
 | ⏸️ Cancel | `cancel_tasks` | `cancel_task(id)` | N/A |
